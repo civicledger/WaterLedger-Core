@@ -28,39 +28,49 @@ async function advanceToBlock(number) {
   await timeController.addDays(number);
 }
 
-contract('Media', function(accounts) {
+contract("AUD", function(accounts) {
+
+  const OWNER = accounts[0];
+  const ALICE = accounts[1];
+
   beforeEach(async function () {
-      this.token = await Token.new({from: accounts[0]});
+      this.token = await Token.new({from: OWNER});
   });
 
-  it("total supply should be 100000000", async function () {
+  it("total supply should be 0", async function () {
     const actual = await this.token.totalSupply();
-    assert.equal(actual.valueOf(), 100000000, "Total supply should be 100000000");
+    assert.equal(actual.valueOf(), 0, "Total supply should be 0");
   });
 
-  it("owner balance should be 100000000", async function () {
-    const actual = await this.token.balanceOf(accounts[0]);
-    assert.equal(actual.valueOf(), 100000000, "Balance should be 100000000");
+  it("owner balance should be 0", async function () {
+    const actual = await this.token.balanceOf(OWNER);
+    assert.equal(actual.valueOf(), 0, "Balance should be 0");
   });
 
-  it("should transfer 1337 tokens", async function () {
-    await this.token.transfer(accounts[1], 1337);
-    var actual = await this.token.balanceOf(accounts[0]);
+  it("should mint 2000 tokens", async function () {
+    const actual = await this.token.mint(2000);
+    assert.isTrue(actual);
+    
+    var balance = await this.token.balanceOf(OWNER);
+    assert.equal(balance.valueOf(), 2000, "Balance should be 2000");
+  });
+
+  it("should transfer 1337 tokens to alice", async function () {
+    await this.token.transfer(ALICE, 1337);
+    var actual = await this.token.balanceOf(OWNER);
     assert.equal(actual.valueOf(), 99998663, "Balance should be 99998663");
 
-    actual = await this.token.balanceOf(accounts[1]);
+    actual = await this.token.balanceOf(ALICE);
     assert.equal(actual.valueOf(), 1337, "Balance should be 1337");
   });
 
   it("owner should allow alice to transfer 100 tokens to bob", async function () {
     //account 0 (owner) approves alice
-    const owner = accounts[0];
-    const bob = accounts[1];
     const alice = accounts[2];
-    await this.token.approve(alice, 100);
+    await this.token.approve(ALICE, 100);
     
     //account 0 (owner) now transfers from alice to bob
-    await this.token.transferFrom(owner, bob, 100, {from: alice});
+    await this.token.transferFrom(OWNER, bob, 100, {from: ALICE});
     var actual = await this.token.balanceOf(bob);
     assert.equal(actual.valueOf(), 100, "Balance should be 100");
   });

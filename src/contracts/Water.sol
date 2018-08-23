@@ -4,13 +4,13 @@ import "./ERC20.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
-contract AUD is Ownable, ERC20 {
+contract Water is Ownable, ERC20 {
     using SafeMath for uint;
 
     // Public variables of the token
-    string public name = "Water Ledger AUD";
-    string public symbol = "AUD";
-    uint8 public decimals = 2;
+    string public name = "Water Ledger Water";
+    string public symbol = "CLW";
+    uint8 public decimals = 12; //megalitres
     uint256 public totalSupply;
 
     mapping (address => uint256) balances;

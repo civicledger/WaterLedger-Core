@@ -28,6 +28,6 @@ contract Exchange {
     function bid(uint256 amount, uint256 price) public {
         //require(_aud.balanceOf(msg.sender) >= amount * price, "Not enough funds");
 
-        _aud.transfer(amount, _owner);
+        //_aud.transfer(amount, _owner);
     }
 }
