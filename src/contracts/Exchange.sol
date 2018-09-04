@@ -18,7 +18,6 @@ contract Exchange {
         uint256 expires;
     }
 
-
     constructor (address aud) public {
         _owner = msg.sender;
         _aud = AUD(aud);
