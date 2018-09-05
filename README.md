@@ -1,16 +1,8 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Smart Contracts for Waterledger
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Accounts
 
-## Accounts
-
-Owner 0x0dbFd696b6f6498bafd57c6D003fe3D864169725
+Owner `0x01b860179eE8884b507a4ab7265e93498e8f242a`
 
 `retreat kitten seek knife accuse pole guess lion hold vessel normal large`
 
