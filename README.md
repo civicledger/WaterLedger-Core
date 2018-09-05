@@ -1,8 +1,11 @@
 # Smart Contracts for Waterledger
 
 # Accounts
-
-Owner `0x01b860179eE8884b507a4ab7265e93498e8f242a`
+0x01b860179eE8884b507a4ab7265e93498e8f242a (Owner)
+0x4F9a36718a7240D01f4e85da3a9421421DdE5535
+0xc456E0874cF42a504Ed3c3C70f5d1cd33AaeE422
+0x00EDa1c2C0B8F76aF52b3DFb956e7cf1f584d376
+0x79Bd3796463b7b5615613C78554144cD44176283
 
 `retreat kitten seek knife accuse pole guess lion hold vessel normal large`
 
