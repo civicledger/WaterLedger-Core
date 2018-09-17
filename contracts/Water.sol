@@ -1,11 +1,11 @@
 pragma solidity ^0.4.23;
 
-import "./ERC20.sol";
-import "./Ownable.sol";
 import "./SafeMath.sol";
 
-contract Water is Ownable, ERC20 {
+contract Water {
     using SafeMath for uint;
+
+    address public owner;
 
     // Public variables of the token
     string public name = "Water Ledger Water";
@@ -26,7 +26,7 @@ contract Water is Ownable, ERC20 {
     
     function transfer(address to, uint256 value) external returns (bool) {
         require(to != 0x0, "Cannot be address zero");
-        require(balances[msg.sender].add(value) >= balances[msg.sender]);
+        require(balances[msg.sender].add(value) >= balances[msg.sender], "Balance is insufficient for this transfer");
 
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[to] = balances[to].add(value);
@@ -41,7 +41,7 @@ contract Water is Ownable, ERC20 {
 
     function transferFrom(address from, address to, uint256 value) external returns (bool success) {
         require(to != 0x0, "Cannot be address zero");
-        require(balances[from] >= value && allowed[from][msg.sender] >= value);
+        require(balances[from] >= value && allowed[from][msg.sender] >= value, "Balance is insufficient for this transfer");
 
         balances[from] = balances[from].sub(value);
         allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
@@ -52,7 +52,7 @@ contract Water is Ownable, ERC20 {
     }
 
     function approve(address spender, uint256 value) external returns (bool) {
-        require(allowed[msg.sender][spender] == 0 || value == 0);
+        require(allowed[msg.sender][spender] == 0 || value == 0, "Value must not be zero");
 
         allowed[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
@@ -80,6 +80,11 @@ contract Water is Ownable, ERC20 {
         emit Burned(totalSupply);
 
         return true;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner of this contract may take that action");
+        _;
     }
 
     event Approval(address indexed owner, address indexed spender, uint256 value);

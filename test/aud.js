@@ -1,5 +1,4 @@
-const Token = artifacts.require("Water");
-const assertJump = require("./assertJump.js");
+const Token = artifacts.require("AUD");
 
 const durationTime = 28; //4 weeks
 
@@ -28,7 +27,7 @@ async function advanceToBlock(number) {
   await timeController.addDays(number);
 }
 
-contract("Water", function(accounts) {
+contract("AUD", function(accounts) {
 
   const OWNER = accounts[0];
   const ALICE = accounts[1];
@@ -50,7 +49,6 @@ contract("Water", function(accounts) {
 
   it("should mint 2000 tokens", async function () {
     const actual = await this.token.mint(2000);
-
     var balance = await this.token.balanceOf(OWNER);
     assert.equal(balance.valueOf(), 2000, "Balance should be 2000");
   });
@@ -65,7 +63,7 @@ contract("Water", function(accounts) {
   it("should transfer 1337 tokens to alice", async function () {
     await this.token.transfer(ALICE, 1337);
     var actual = await this.token.balanceOf(OWNER);
-    assert.equal(actual.valueOf(), 653, "Balance should be 663");
+    assert.equal(actual.valueOf(), 653, "Balance should be 653");
 
     actual = await this.token.balanceOf(ALICE);
     assert.equal(actual.valueOf(), 1337, "Balance should be 1337");
@@ -73,7 +71,6 @@ contract("Water", function(accounts) {
 
   it("owner should allow alice to transfer 100 tokens to bob", async function () {
     //account 0 (owner) approves alice
-    const alice = accounts[2];
     await this.token.approve(ALICE, 100);
     
     //account 0 (owner) now transfers from alice to bob

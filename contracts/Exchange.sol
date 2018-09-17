@@ -18,15 +18,8 @@ contract Exchange {
         uint256 expires;
     }
 
-    constructor (address aud) public {
+    constructor () public {
         _owner = msg.sender;
-        _aud = AUD(aud);
-    }
-
-    //max buy price
-    function bid(uint256 amount, uint256 price) public {
-        //require(_aud.balanceOf(msg.sender) >= amount * price, "Not enough funds");
-
-        //_aud.transfer(amount, _owner);
+        //_aud = AUD(aud);
     }
 }
