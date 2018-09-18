@@ -24,5 +24,5 @@ module.exports = async function(deployer) {
 
   await deployer.deploy(AUD);
   await deployer.deploy(Exchange);
-  await deployer.deploy(Water);
+  await deployer.deploy(Water, 2000);
 };
