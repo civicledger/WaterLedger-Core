@@ -8,16 +8,13 @@ contract AUD is Ownable, ERC20 {
     using SafeMath for uint;
 
     // Public variables of the token
-    string public name = "Water Ledger AUD";
-    string public symbol = "AUD";
-    uint8 public decimals = 2;
-    uint256 public totalSupply;
-
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
 
     constructor() public {
-        owner = msg.sender;
+        name = "Water Ledger AUD";
+        symbol = "AUD";
+        decimals = 2;
     }
 
     function balanceOf(address who) external view returns (uint256 balance) {
@@ -26,7 +23,7 @@ contract AUD is Ownable, ERC20 {
     
     function transfer(address to, uint256 value) external returns (bool) {
         require(to != 0x0, "Cannot be address zero");
-        require(balances[msg.sender].add(value) >= balances[msg.sender]);
+        require(balances[msg.sender].add(value) >= balances[msg.sender], "Balance is insufficient for this transfer");
 
         balances[msg.sender] = balances[msg.sender].sub(value);
         balances[to] = balances[to].add(value);
@@ -41,7 +38,7 @@ contract AUD is Ownable, ERC20 {
 
     function transferFrom(address from, address to, uint256 value) external returns (bool success) {
         require(to != 0x0, "Cannot be address zero");
-        require(balances[from] >= value && allowed[from][msg.sender] >= value);
+        require(balances[from] >= value && allowed[from][msg.sender] >= value, "Balance is insufficient for this transfer");
 
         balances[from] = balances[from].sub(value);
         allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
@@ -82,8 +79,6 @@ contract AUD is Ownable, ERC20 {
         return true;
     }
 
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    event Transfer(address indexed from, address indexed to, uint256 value);
     event Minted(uint256 value);
     event Burned(uint256 value);
 }
