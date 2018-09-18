@@ -16,8 +16,13 @@ contract Water {
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
 
-    constructor() public {
+    mapping (address => bool) allocators;
+
+    constructor(uint256 _supply) public {
+        totalSupply = _supply;
         owner = msg.sender;
+        balances[owner] = _supply;
+        allocators[owner] = true;
     }
 
     function balanceOf(address who) external view returns (uint256 balance) {
@@ -37,6 +42,12 @@ contract Water {
 
     function allowance(address tokenOwner, address spender) external view returns (uint remaining) {
         return allowed[tokenOwner][spender];
+    }
+
+    function allocate(address _to, uint256 _amount) external {
+        balances[owner] = balances[owner].sub(_amount);
+        balances[_to] = balances[_to].add(_amount);
+        emit Allocation(_to, _amount);
     }
 
     function transferFrom(address from, address to, uint256 value) external returns (bool success) {
@@ -59,27 +70,12 @@ contract Water {
         return true;
     }
 
-    function mint(uint256 value) public onlyOwner() returns(bool) {
-        require(value > 0, "Amount must be greater than zero");
-
-        balances[owner] = balances[owner].add(value);
-        totalSupply = totalSupply.add(value);
-
-        emit Minted(totalSupply);
-
-        return true;
+    function setAllocator(address _address) public onlyOwner {
+        allocators[_address] = true;
     }
 
-    function burn(uint256 value) public onlyOwner() returns (bool) {
-        require(value > 0, "Amount must be greater than zero");
-        require(totalSupply >= value, "Cannot burn more than you have");
-
-        balances[owner] = balances[owner].sub(value);
-        totalSupply = totalSupply.sub(value);
-
-        emit Burned(totalSupply);
-
-        return true;
+    function isAllocator() public view returns (bool) {
+        return allocators[msg.sender];
     }
 
     modifier onlyOwner() {
@@ -87,8 +83,7 @@ contract Water {
         _;
     }
 
+    event Allocation(address indexed owner, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Minted(uint256 value);
-    event Burned(uint256 value);
 }
