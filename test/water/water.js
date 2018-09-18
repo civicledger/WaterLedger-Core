@@ -1,6 +1,6 @@
 const Water = artifacts.require("Water");
 
-contract.only("Water Contract", function(accounts) {
+contract("Water Contract", function(accounts) {
 
   var contractInstance;
 
@@ -87,7 +87,7 @@ contract.only("Water Contract", function(accounts) {
     });
 
 
-    
+
   });
 
 });
