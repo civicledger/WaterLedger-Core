@@ -2,14 +2,15 @@ pragma solidity ^0.4.24;
 
 import "./ERC20.sol";
 import "./AUD.sol";
+import "./Ownable.sol";
 
-contract Exchange {
+contract Exchange is Ownable {
 
     ERC20 _aud;
 
     address private _owner;
 
-    Trade[] public trades;
+    Trade[] public marketHistory;
 
     struct Trade {
         uint256 amount; //water
@@ -19,7 +20,5 @@ contract Exchange {
     }
 
     constructor () public {
-        _owner = msg.sender;
-        //_aud = AUD(aud);
     }
 }

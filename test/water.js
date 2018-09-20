@@ -20,7 +20,7 @@ contract("Water Contract", function(accounts) {
         const actual = await contractInstance.totalSupply();
         assert.equal(actual, AMOUNT, `Total supply is not ${AMOUNT}`);
       });
-  
+
       it("owner balance should be 2000", async function () {
         const actual = await contractInstance.balanceOf(OWNER);
         assert.equal(actual, AMOUNT, `Owner balance is not ${AMOUNT}`);
@@ -31,22 +31,22 @@ contract("Water Contract", function(accounts) {
 
       it("should transfer 1337 tokens to alice", async function () {
         await contractInstance.transfer(ALICE, 1337);
-  
+
         let balance = await contractInstance.balanceOf(OWNER);
         assert.equal(balance, 663, "Balance should be 663");
-  
+
         balance = await contractInstance.balanceOf(ALICE);
         assert.equal(balance, 1337, "Balance should be 1337");
       });
-  
+
       it("owner should allow alice to transfer 100 tokens to bob", async function () {
         // account 0 (owner) approves alice
         await contractInstance.transfer(ALICE, 1337);
         await contractInstance.approve(ALICE, 100);
-        
+
         //account 0 (owner) now transfers from alice to bob
         await contractInstance.transferFrom(OWNER, BOB, 100, {from: ALICE});
-        
+
         const balance = await contractInstance.balanceOf(BOB);
         assert.equal(balance, 100, "Balance should be 100");
       });

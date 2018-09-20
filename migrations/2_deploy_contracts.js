@@ -22,7 +22,7 @@ module.exports = async function(deployer) {
     );
   });
 
-  await deployer.deploy(AUD);
+  await deployer.deploy(AUD, 0);
   await deployer.deploy(Exchange);
   await deployer.deploy(Water, 2000);
 };

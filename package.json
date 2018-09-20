@@ -1,0 +1,26 @@
+{
+  "name": "waterledger-core",
+  "version": "1.0.0",
+  "description": "Waterledger smart contracts and tests",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "truffle-hdwallet-provider": "^1.0.0-web3one.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "civicledger@vs-ssh.visualstudio.com:v3/civicledger/Water Ledger/Core"
+  },
+  "keywords": [
+    "truffle",
+    "solidity"
+  ],
+  "author": "Civic Ledger",
+  "license": "ISC"
+}
