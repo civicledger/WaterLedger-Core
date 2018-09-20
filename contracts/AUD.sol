@@ -10,7 +10,12 @@ contract AUD is ERC20, Ownable  {
     string public _name = "Water Ledger AUD";
     string public _symbol = "AUD";
     uint8 public _decimals = 2; //megalitres
-    
+
+    constructor(uint256 supply) public {
+        _totalSupply = supply;
+        _balances[msg.sender] = supply;
+    }
+
     function mint(uint256 value) public onlyOwner returns(bool) {
         require(value > 0, "Amount must be greater than zero");
 
