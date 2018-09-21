@@ -18,7 +18,6 @@ contract Stats is Ownable {
     mapping(address => bool) _allowedWriters;
 
     constructor(uint256 volume, uint256 inTransit, uint256 avg, uint256 min, uint256 max) public {
-
         _allowedWriters[msg.sender] = true;
         _parentContract = msg.sender;
         _volumeAvailable = volume;
