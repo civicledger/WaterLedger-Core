@@ -2,19 +2,30 @@ const Stats = artifacts.require("Stats");
 const Water = artifacts.require("Water");
 const AUD = artifacts.require("AUD");
 const OrderBook = artifacts.require("OrderBook");
+let AssembleStruct = require('./helpers/AssembleStruct');
+
+const structDefinition = [
+  {name: 'offerType', type: 'uint256'},
+  {name: 'owner', type: 'address'},
+  {name: 'price', type: 'uint256'},
+  {name: 'quantity', type: 'uint256'},
+  {name: 'timeStamp', type: 'uint256'},
+];
 
 contract("OrderBook", function(accounts) {
 
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];
+  const ORDER_TYPE_ASK = 0;
+  const ORDER_TYPE_OFFER = 1;
 
   var contractInstance;
   var statsInstance;
   var waterInstance;
 
   const sellLimitPrice = 300;
-  const buyLimitPrice = 300;
+  const buyLimitPrice = 200;
   const defaultSellQuantity = 300;
   const defaultBuyQuantity = 400;
 
@@ -48,8 +59,9 @@ contract("OrderBook", function(accounts) {
     await waterInstance.transfer(ALICE, 500);
     await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
 
-    let [ owner, quantity, price ] = Object.values(await contractInstance._asks(0));
+    let [ orderType, owner, price, quantity ] = Object.values(await contractInstance._asks(0));
 
+    assert.equal(orderType, ORDER_TYPE_ASK, "Should be an ask");
     assert.equal(owner, ALICE, "Owner should be alice");
     assert.equal(price, sellLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultSellQuantity, "Incorrect quantity");
@@ -68,10 +80,35 @@ contract("OrderBook", function(accounts) {
     await audInstance.transfer(BOB, 500);
     await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
 
-    let [ owner, quantity, price ] = Object.values(await contractInstance._offers(0));
+    let [ orderType, owner, price, quantity, timeStamp ] = Object.values(await contractInstance._offers(0));
 
+    assert.equal(orderType, ORDER_TYPE_OFFER, "Should be an offer");
     assert.equal(owner, BOB, "Owner should be Bob");
     assert.equal(price, buyLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultBuyQuantity, "Incorrect quantity");
+  });
+
+  describe("OrderBook with setup complete", () => {
+    beforeEach(async () => {
+      await waterInstance.transfer(ALICE, 500);
+      await audInstance.transfer(BOB, 500);
+      await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
+      await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
+      await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
+    });
+
+    it("should have three total limit orders", async () => {
+      let orderBookData = await contractInstance.getOrderBook();
+      let fixedData = AssembleStruct.assemble(structDefinition, Object.values(orderBookData));
+
+      assert.equal(fixedData.length, 3, "There should be three order limits");
+
+      assert.equal(fixedData[0].owner, ALICE, 'Incorrect "owner" record found');
+      assert.equal(fixedData[0].quantity, defaultSellQuantity, 'Incorrect "quantity" record found');
+      assert.equal(fixedData[0].price, sellLimitPrice, 'Incorrect "price" record found');
+      assert.equal(fixedData[2].owner, BOB, 'Incorrect "owner" record found');
+      assert.equal(fixedData[2].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
+      assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
+    });
   });
 });
