@@ -1,7 +1,7 @@
 var Transfers = artifacts.require("Transfers");
 let AssembleStruct = require('./helpers/AssembleStruct');
 
-let mockData = require('../migrations/transactions.json');
+//let mockData = require('../migrations/transactions.json');
 
 contract('Transfers', function(accounts) {
 
@@ -50,10 +50,10 @@ contract('Transfers', function(accounts) {
 
 
 async function addFiveTransfers(contractInstance, web3) {
-  await contractInstance.addTransfer(web3.utils.asciiToHex("abc"),  web3.utils.asciiToHex("def"),  web3.utils.asciiToHex("Brisbane, QLD"),  123,  500, 1536896368);
-  await contractInstance.addTransfer(web3.utils.asciiToHex("ghi"),  web3.utils.asciiToHex("jkl"),  web3.utils.asciiToHex("Sydney, NSW"),  124,  400, 1536896368);
-  await contractInstance.addTransfer(web3.utils.asciiToHex("mno"),  web3.utils.asciiToHex("pqr"),  web3.utils.asciiToHex("Melbourne, VIC"),  223,  500, 1536896368);
-  await contractInstance.addTransfer(web3.utils.asciiToHex("stu"),  web3.utils.asciiToHex("vwx"),  web3.utils.asciiToHex("Adelaide, SA"),  225,  400, 1536896368);
-  await contractInstance.addTransfer(web3.utils.asciiToHex("yz1"),  web3.utils.asciiToHex("aa1"),  web3.utils.asciiToHex("Perth, WA"),  334,  500, 1536896368);
+  await contractInstance.addTransfer(web3.utils.asciiToHex("abc"),  web3.utils.asciiToHex("def"), web3.utils.asciiToHex("Brisbane, QLD"),  123,  500, 1536896368);
+  await contractInstance.addTransfer(web3.utils.asciiToHex("ghi"),  web3.utils.asciiToHex("jkl"), web3.utils.asciiToHex("Sydney, NSW"),  124,  400, 1536896368);
+  await contractInstance.addTransfer(web3.utils.asciiToHex("mno"),  web3.utils.asciiToHex("pqr"), web3.utils.asciiToHex("Melbourne, VIC"),  223,  500, 1536896368);
+  await contractInstance.addTransfer(web3.utils.asciiToHex("stu"),  web3.utils.asciiToHex("vwx"), web3.utils.asciiToHex("Adelaide, SA"),  225,  400, 1536896368);
+  await contractInstance.addTransfer(web3.utils.asciiToHex("63e838ebc644a71b581ef172958f675c2873f9b9"), web3.utils.asciiToHex("aa1"),  web3.utils.asciiToHex("Perth, WA"),  334,  500, 1536896368);
 }
 
