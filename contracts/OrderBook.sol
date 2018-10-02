@@ -55,6 +55,28 @@ contract OrderBook {
         emit OrderAdded(msg.sender);
     }
 
+    function getSortedAskBook() public view returns (uint256[]) {
+        uint256[] memory orders = new uint256[](_asks.length);
+
+        //Must have more than 1 to sort
+        if (_asks.length > 1) {
+
+            for (uint i = 0; i < _asks.length - 1; i++) {
+                
+                if (_asks[i].price < _asks[i + 1].price) {
+                    orders[i] = _asks[i].price;
+                    orders[i + 1] = _asks[i + 1].price;
+                } else {
+                    orders[i] = _asks[i + 1].price;
+                    orders[i + 1] = _asks[i].price;
+                }
+            }
+
+        }
+
+        return orders;
+    }
+
     function getOrderBook() public view returns (
         OrderType[],
         address[],

@@ -110,5 +110,11 @@ contract("OrderBook", function(accounts) {
       assert.equal(fixedData[2].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
       assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
     });
+
+    it.only("should get sorted orders", async () => {
+      let orderBookData = await contractInstance.getSortedAskBook();
+
+      console.log(orderBookData);
+    });
   });
 });
