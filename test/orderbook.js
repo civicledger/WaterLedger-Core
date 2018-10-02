@@ -91,10 +91,15 @@ contract("OrderBook", function(accounts) {
   describe("OrderBook with setup complete", () => {
     beforeEach(async () => {
       await waterInstance.transfer(ALICE, 500);
-      await audInstance.transfer(BOB, 500);
-      await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
-      await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
-      await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
+      //await audInstance.transfer(BOB, 500);
+
+      //price quantity
+      await contractInstance.addSellLimitOrder(100, 1, {from: ALICE});
+      await contractInstance.addSellLimitOrder(25, 1, {from: ALICE});
+      await contractInstance.addSellLimitOrder(50, 1, {from: ALICE});
+
+      //await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
+      //await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
     });
 
     it("should have three total limit orders", async () => {
@@ -114,7 +119,11 @@ contract("OrderBook", function(accounts) {
     it.only("should get sorted orders", async () => {
       let orderBookData = await contractInstance.getSortedAskBook();
 
-      console.log(orderBookData);
+      console.log(orderBookData[0]);
+
+      assert.equal(25, orderBookData[0], "");
+      assert.equal(50, orderBookData[1], "");
+      assert.equal(100, orderBookData[2], "");
     });
   });
 });
