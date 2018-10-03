@@ -6,8 +6,9 @@ import "./Stats.sol";
 import "./Stats.sol";
 import "./AUD.sol";
 import "./IERC20.sol";
+import "./QuickSort.sol";
 
-contract OrderBook {
+contract OrderBook is QuickSort {
 
     IERC20 public _water;
     IERC20 public _aud;
@@ -98,34 +99,35 @@ contract OrderBook {
             indexes[i] = i;
         }
 
-        return sort(prices);
+        uint256[] memory sortedIndexes = sortWithIndex(prices, indexes);
+        return sortedIndexes;
     }
 
-    function sort(uint[] data) public pure returns(uint[]) {
-        quickSort(data, int(0), int(data.length - 1));
-        return data;
-    }
+    // function sort(uint[] data) public pure returns(uint[]) {
+    //     quickSort(data, int(0), int(data.length - 1));
+    //     return data;
+    // }
 
-    function quickSort(uint[] memory arr, int left, int right) internal pure {
-        int i = left;
-        int j = right;
-        if(i==j) return;
-        uint pivot = arr[uint(left + (right - left) / 2)];
-        while (i <= j) {
-            while (arr[uint(i)] < pivot) i++;
-            while (pivot < arr[uint(j)]) j--;
-            if (i <= j) {
-                (arr[uint(i)], arr[uint(j)]) = (arr[uint(j)], arr[uint(i)]);
-                i++;
-                j--;
-            }
-        }
+    // function quickSort(uint[] memory arr, int left, int right) internal pure {
+    //     int i = left;
+    //     int j = right;
+    //     if(i==j) return;
+    //     uint pivot = arr[uint(left + (right - left) / 2)];
+    //     while (i <= j) {
+    //         while (arr[uint(i)] < pivot) i++;
+    //         while (pivot < arr[uint(j)]) j--;
+    //         if (i <= j) {
+    //             (arr[uint(i)], arr[uint(j)]) = (arr[uint(j)], arr[uint(i)]);
+    //             i++;
+    //             j--;
+    //         }
+    //     }
     
-        if (left < j)
-            quickSort(arr, left, j);
-        if (i < right)
-            quickSort(arr, i, right);
-    }
+    //     if (left < j)
+    //         quickSort(arr, left, j);
+    //     if (i < right)
+    //         quickSort(arr, i, right);
+    // }
 
     event OrderAdded(address _stats);
 }
