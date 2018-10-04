@@ -7,9 +7,10 @@ contract QuickSort {
         return data;
     }
 
-    function sortWithIndex(uint[] data, uint[] indices) public pure returns(uint[], uint[]) {
+    //Returns the sorted indexes
+    function sortWithIndex(uint[] data, uint[] indices) public pure returns(uint[]) {
         quickSortWithIndex(data, indices, int(0), int(data.length - 1));
-        return (data, indices);
+        return indices;
     }
     
     function quickSort(uint[] memory arr, int left, int right) internal pure {
