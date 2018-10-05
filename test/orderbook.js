@@ -111,19 +111,15 @@ contract("OrderBook", function(accounts) {
       assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
     });
 
-    it.only("should sort ask orders", async () => {
-
+    it("should sort ask orders", async () => {
       await contractInstance.addSellLimitOrder(200, 100, {from: ALICE});
       await contractInstance.addSellLimitOrder(150, 100, {from: ALICE});
-      await contractInstance.addSellLimitOrder(150, 100, {from: ALICE});
-
-      //let orderBookData = await contractInstance.getOrderBook();
 
       let actual = await contractInstance.getPriceTimeOrders();
 
-      console.log(actual);
-
-      //assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
+      assert.equal(actual[0], 2, "Should be index 2");
+      assert.equal(actual[1], 1, "Should be index 1");
+      assert.equal(actual[2], 0, "Should be index 0");
     });
   });
 });
