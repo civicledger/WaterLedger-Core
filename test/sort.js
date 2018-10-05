@@ -31,6 +31,6 @@ contract('QuickSort', function(accounts) {
 
     assert.equal(actual[0], 2, "Should be index 2");
     assert.equal(actual[1], 0, "Should be index 0");
-    assert.equal(actual[2], 4, "Should be index 0");
+    assert.equal(actual[2], 4, "Should be index 4");
   });
 });
