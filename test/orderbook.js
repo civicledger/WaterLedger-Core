@@ -34,6 +34,8 @@ contract("OrderBook", function(accounts) {
     waterInstance = await Water.new(500000);
     audInstance = await AUD.new(500000);
     contractInstance = await OrderBook.new(statsInstance.address, waterInstance.address, audInstance.address);
+    await waterInstance.setOrderBook(contractInstance.address);
+    await audInstance.setOrderBook(contractInstance.address);
     await statsInstance.addWriter(contractInstance.address);
   });
 
@@ -61,8 +63,11 @@ contract("OrderBook", function(accounts) {
 
     let [ orderType, owner, price, quantity ] = Object.values(await contractInstance._asks(0));
 
+    let remainingWaterBalance = await waterInstance.balanceOf(ALICE);
+
     assert.equal(orderType, ORDER_TYPE_ASK, "Should be an ask");
     assert.equal(owner, ALICE, "Owner should be alice");
+    assert.equal(Number(remainingWaterBalance), 500 - sellLimitPrice, "Alice's water balance has not been correctly reduced");
     assert.equal(price, sellLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultSellQuantity, "Incorrect quantity");
   });
@@ -82,8 +87,11 @@ contract("OrderBook", function(accounts) {
 
     let [ orderType, owner, price, quantity, timeStamp ] = Object.values(await contractInstance._offers(0));
 
+    let remainingAudBalance = await audInstance.balanceOf(BOB);
+
     assert.equal(orderType, ORDER_TYPE_OFFER, "Should be an offer");
     assert.equal(owner, BOB, "Owner should be Bob");
+    assert.equal(Number(remainingAudBalance), 500 - buyLimitPrice, "Bob's aud balance has not been correctly reduced");
     assert.equal(price, buyLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultBuyQuantity, "Incorrect quantity");
   });
@@ -91,7 +99,7 @@ contract("OrderBook", function(accounts) {
   describe("OrderBook with setup complete", () => {
     beforeEach(async () => {
       await waterInstance.transfer(ALICE, 500);
-      await audInstance.transfer(BOB, 500);
+      await audInstance.transfer(BOB, 1000);
       await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
       await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
       await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
@@ -109,6 +117,33 @@ contract("OrderBook", function(accounts) {
       assert.equal(fixedData[2].owner, BOB, 'Incorrect "owner" record found');
       assert.equal(fixedData[2].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
       assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
+    });
+
+    it("should have one sell order", async () => {
+      let orderBookData = await contractInstance.getOrderBookAsks(10);
+
+      let fixedData = AssembleStruct.assemble(structDefinition, Object.values(orderBookData));
+
+      assert.equal(fixedData.length, 1, "There should be 1 ask order limits");
+
+      assert.equal(fixedData[0].owner, ALICE, 'Incorrect "owner" record found');
+      assert.equal(fixedData[0].quantity, defaultSellQuantity, 'Incorrect "quantity" record found');
+      assert.equal(fixedData[0].price, sellLimitPrice, 'Incorrect "price" record found');
+    });
+
+    it("should have two buy orders", async () => {
+      let orderBookData = await contractInstance.getOrderBookOffers(5);
+
+      let fixedData = AssembleStruct.assemble(structDefinition, Object.values(orderBookData));
+
+      assert.equal(fixedData.length, 2, "There should be 2 offer order limits");
+
+      assert.equal(fixedData[0].owner, BOB, 'Incorrect "owner" record found');
+      assert.equal(fixedData[0].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
+      assert.equal(fixedData[0].price, buyLimitPrice, 'Incorrect "price" record found');
+      assert.equal(fixedData[1].owner, BOB, 'Incorrect "owner" record found');
+      assert.equal(fixedData[1].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
+      assert.equal(fixedData[1].price, buyLimitPrice, 'Incorrect "price" record found');
     });
   });
 });
