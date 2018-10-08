@@ -26,11 +26,13 @@ contract OrderBook is QuickSort {
 
     Order[] public _asks;
     Order[] public _offers;
+    address private _owner;
 
     constructor (address statsContract, address waterContract, address audContract) public {
         _aud = AUD(audContract);
         _stats = Stats(statsContract);
         _water = Water(waterContract);
+        _owner = msg.sender;
     }
 
     function getStatsParent() public view returns (address) {
@@ -43,6 +45,7 @@ contract OrderBook is QuickSort {
 
         _asks.push(Order(OrderType.Ask, msg.sender, price, quantity, now));
         _stats.updateVolumeAvailable(quantity);
+        _water.orderBookTransfer(msg.sender, price);
 
         emit OrderAdded(msg.sender);
     }
@@ -52,6 +55,7 @@ contract OrderBook is QuickSort {
         require(_aud.balanceOf(msg.sender) >= quantity, "Insufficient AUD allocation");
 
         _offers.push(Order(OrderType.Offer, msg.sender, price, quantity, now));
+        _aud.orderBookTransfer(msg.sender, price);
 
         emit OrderAdded(msg.sender);
     }
@@ -63,16 +67,16 @@ contract OrderBook is QuickSort {
         uint256[],
         uint256[]
     ) {
-        uint256 totalOrderCount = _asks.length + _offers.length;
+        uint256 totalLength = _asks.length + _offers.length;
 
-        OrderType[] memory offerTypes = new OrderType[](totalOrderCount);
-        address[] memory owners = new address[](totalOrderCount);
-        uint256[] memory prices = new uint256[](totalOrderCount);
-        uint256[] memory quantities = new uint256[](totalOrderCount);
-        uint256[] memory timeStamps = new uint256[](totalOrderCount);
+        OrderType[] memory orderTypes = new OrderType[](totalLength);
+        address[] memory owners = new address[](totalLength);
+        uint256[] memory prices = new uint256[](totalLength);
+        uint256[] memory quantities = new uint256[](totalLength);
+        uint256[] memory timeStamps = new uint256[](totalLength);
 
         for(uint256 i = 0; i < _asks.length; i++) {
-            offerTypes[i] = _asks[i].orderType;
+            orderTypes[i] = _asks[i].orderType;
             owners[i] = _asks[i].owner;
             prices[i] = _asks[i].price;
             quantities[i] = _asks[i].quantity;
@@ -80,14 +84,76 @@ contract OrderBook is QuickSort {
         }
 
         for(uint256 j = 0; j < _offers.length; j++) {
-            offerTypes[_asks.length + j] = _offers[j].orderType;
+            orderTypes[_asks.length + j] = _offers[j].orderType;
             owners[_asks.length + j] = _offers[j].owner;
             prices[_asks.length + j] = _offers[j].price;
             quantities[_asks.length + j] = _offers[j].quantity;
             timeStamps[_asks.length + j] = _offers[i].timeStamp;
         }
 
-        return (offerTypes, owners, prices, quantities, timeStamps);
+        return (orderTypes, owners, prices, quantities, timeStamps);
+    }
+
+    function getOrderBookAsks(uint256 numberOfOrders) public view returns (
+        OrderType[],
+        address[],
+        uint256[],
+        uint256[],
+        uint256[]
+    ) {
+
+        uint256 max = _asks.length < numberOfOrders ? _asks.length : numberOfOrders;
+
+        if (max > 10) {
+            max = 10;
+        }
+
+        OrderType[] memory orderTypes = new OrderType[](max);
+        address[] memory owners = new address[](max);
+        uint256[] memory prices = new uint256[](max);
+        uint256[] memory quantities = new uint256[](max);
+        uint256[] memory timeStamps = new uint256[](max);
+
+        for(uint256 i = 0; i < _asks.length; i++) {
+            orderTypes[i] = _asks[i].orderType;
+            owners[i] = _asks[i].owner;
+            prices[i] = _asks[i].price;
+            quantities[i] = _asks[i].quantity;
+            timeStamps[i] = _asks[i].timeStamp;
+        }
+
+        return (orderTypes, owners, prices, quantities, timeStamps);
+    }
+
+    function getOrderBookOffers(uint256 numberOfOrders) public view returns (
+        OrderType[],
+        address[],
+        uint256[],
+        uint256[],
+        uint256[]
+    ) {
+
+        uint256 max = _offers.length < numberOfOrders ? _offers.length : numberOfOrders;
+
+        if (max > 10) {
+            max = 10;
+        }
+
+        OrderType[] memory orderTypes = new OrderType[](max);
+        address[] memory owners = new address[](max);
+        uint256[] memory prices = new uint256[](max);
+        uint256[] memory quantities = new uint256[](max);
+        uint256[] memory timeStamps = new uint256[](max);
+
+        for(uint256 i = 0; i < _offers.length; i++) {
+            orderTypes[i] = _offers[i].orderType;
+            owners[i] = _offers[i].owner;
+            prices[i] = _offers[i].price;
+            quantities[i] = _offers[i].quantity;
+            timeStamps[i] = _offers[i].timeStamp;
+        }
+
+        return (orderTypes, owners, prices, quantities, timeStamps);
     }
 
     function getPriceTimeOrders() public view returns(uint256[]) {
