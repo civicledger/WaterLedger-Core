@@ -6,8 +6,9 @@ import "./Stats.sol";
 import "./Stats.sol";
 import "./AUD.sol";
 import "./IERC20.sol";
+import "./QuickSort.sol";
 
-contract OrderBook {
+contract OrderBook is QuickSort {
 
     IERC20 public _water;
     IERC20 public _aud;
@@ -153,6 +154,19 @@ contract OrderBook {
         }
 
         return (orderTypes, owners, prices, quantities, timeStamps);
+    }
+
+    function getPriceTimeOrders() public view returns(uint256[]) {
+        uint256[] memory prices = new uint256[](_asks.length);
+        uint256[] memory indexes = new uint256[](_asks.length);
+
+        for (uint i = 0; i < _asks.length; i++) {
+            prices[i] = _asks[i].price;
+            indexes[i] = i;
+        }
+
+        uint256[] memory sortedIndexes = sortWithIndex(prices, indexes);
+        return sortedIndexes;
     }
 
     event OrderAdded(address _stats);

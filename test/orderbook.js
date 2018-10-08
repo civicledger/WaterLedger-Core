@@ -119,6 +119,18 @@ contract("OrderBook", function(accounts) {
       assert.equal(fixedData[2].price, buyLimitPrice, 'Incorrect "price" record found');
     });
 
+    it("should sort ask orders", async () => {
+      await waterInstance.transfer(ALICE, 500);
+      await contractInstance.addSellLimitOrder(200, 100, {from: ALICE});
+      await contractInstance.addSellLimitOrder(150, 100, {from: ALICE});
+
+      let actual = await contractInstance.getPriceTimeOrders();
+
+      assert.equal(actual[0], 2, "Should be index 2");
+      assert.equal(actual[1], 1, "Should be index 1");
+      assert.equal(actual[2], 0, "Should be index 0");
+    });
+
     it("should have one sell order", async () => {
       let orderBookData = await contractInstance.getOrderBookAsks(10);
 
@@ -144,6 +156,7 @@ contract("OrderBook", function(accounts) {
       assert.equal(fixedData[1].owner, BOB, 'Incorrect "owner" record found');
       assert.equal(fixedData[1].quantity, defaultBuyQuantity, 'Incorrect "quantity" record found');
       assert.equal(fixedData[1].price, buyLimitPrice, 'Incorrect "price" record found');
+
     });
   });
 });
