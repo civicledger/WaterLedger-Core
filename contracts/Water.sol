@@ -36,7 +36,7 @@ contract Water is ERC20, Ownable {
         return _allocators[msg.sender];
     }
 
-    function setOrderBook(address orderBook) public onlyOwner {
+    function setOrderBook(address orderBook) public {
         _orderBook = orderBook;
     }
 

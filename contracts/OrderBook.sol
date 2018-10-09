@@ -45,7 +45,7 @@ contract OrderBook is QuickSort {
 
         _asks.push(Order(OrderType.Ask, msg.sender, price, quantity, now));
         _stats.updateVolumeAvailable(quantity);
-        _water.orderBookTransfer(msg.sender, price);
+        _water.orderBookTransfer(msg.sender, quantity);
 
         emit OrderAdded(msg.sender);
     }

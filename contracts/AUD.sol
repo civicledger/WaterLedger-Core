@@ -9,7 +9,7 @@ contract AUD is ERC20, Ownable  {
 
     string public _name = "Water Ledger AUD";
     string public _symbol = "AUD";
-    uint8 public _decimals = 2; //megalitres
+    uint256 public _decimals = 2; //cents
 
     address public _orderBook;
 

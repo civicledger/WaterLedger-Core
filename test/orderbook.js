@@ -24,15 +24,15 @@ contract("OrderBook", function(accounts) {
   var statsInstance;
   var waterInstance;
 
-  const sellLimitPrice = 300;
-  const buyLimitPrice = 200;
-  const defaultSellQuantity = 300;
-  const defaultBuyQuantity = 400;
+  const sellLimitPrice = 334822;
+  const buyLimitPrice = 234822;
+  const defaultSellQuantity = 420;
+  const defaultBuyQuantity = 360;
 
   beforeEach(async ()=> {
     statsInstance = await Stats.new(22403, 45, 17212, 13243, 19243);
     waterInstance = await Water.new(500000);
-    audInstance = await AUD.new(500000);
+    audInstance = await AUD.new(50000000);
     contractInstance = await OrderBook.new(statsInstance.address, waterInstance.address, audInstance.address);
     await waterInstance.setOrderBook(contractInstance.address);
     await audInstance.setOrderBook(contractInstance.address);
@@ -58,7 +58,8 @@ contract("OrderBook", function(accounts) {
   });
 
   it("should add a limit sell order from Alice", async () => {
-    await waterInstance.transfer(ALICE, 500);
+    const aliceWaterBalance = 5000;
+    await waterInstance.transfer(ALICE, aliceWaterBalance);
     await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
 
     let [ orderType, owner, price, quantity ] = Object.values(await contractInstance._asks(0));
@@ -67,7 +68,7 @@ contract("OrderBook", function(accounts) {
 
     assert.equal(orderType, ORDER_TYPE_ASK, "Should be an ask");
     assert.equal(owner, ALICE, "Owner should be alice");
-    assert.equal(Number(remainingWaterBalance), 500 - sellLimitPrice, "Alice's water balance has not been correctly reduced");
+    assert.equal(Number(remainingWaterBalance), (aliceWaterBalance - defaultSellQuantity), "Alice's water balance has not been correctly reduced");
     assert.equal(price, sellLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultSellQuantity, "Incorrect quantity");
   });
@@ -82,7 +83,7 @@ contract("OrderBook", function(accounts) {
   });
 
   it("should add a limit buy order from Bob", async () => {
-    await audInstance.transfer(BOB, 500);
+    await audInstance.transfer(BOB, 1000000);
     await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
 
     let [ orderType, owner, price, quantity, timeStamp ] = Object.values(await contractInstance._offers(0));
@@ -91,15 +92,15 @@ contract("OrderBook", function(accounts) {
 
     assert.equal(orderType, ORDER_TYPE_OFFER, "Should be an offer");
     assert.equal(owner, BOB, "Owner should be Bob");
-    assert.equal(Number(remainingAudBalance), 500 - buyLimitPrice, "Bob's aud balance has not been correctly reduced");
+    assert.equal(Number(remainingAudBalance), 1000000 - buyLimitPrice, "Bob's aud balance has not been correctly reduced");
     assert.equal(price, buyLimitPrice, "Sell limit amount is wrong");
     assert.equal(quantity, defaultBuyQuantity, "Incorrect quantity");
   });
 
   describe("OrderBook with setup complete", () => {
     beforeEach(async () => {
-      await waterInstance.transfer(ALICE, 500);
-      await audInstance.transfer(BOB, 1000);
+      await waterInstance.transfer(ALICE, 5000);
+      await audInstance.transfer(BOB, 1000000);
       await contractInstance.addSellLimitOrder(sellLimitPrice, defaultSellQuantity, {from: ALICE});
       await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
       await contractInstance.addBuyLimitOrder(buyLimitPrice, defaultBuyQuantity, {from: BOB});
