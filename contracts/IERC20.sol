@@ -20,6 +20,9 @@ interface IERC20 {
     function transferFrom(address from, address to, uint256 value)
         external returns (bool);
 
+    function orderBookTransfer(address from, uint256 value)
+        external returns (bool);
+
     event Transfer(
         address indexed from,
         address indexed to,

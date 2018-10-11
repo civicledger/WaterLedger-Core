@@ -12,6 +12,8 @@ contract Water is ERC20, Ownable {
     string public _symbol = "CLW";
     uint8 public _decimals = 12; //megalitres
 
+    address public _orderBook;
+
     mapping (address => bool) _allocators;
 
     constructor(uint256 supply) public {
@@ -32,6 +34,21 @@ contract Water is ERC20, Ownable {
 
     function isAllocator() public view returns (bool) {
         return _allocators[msg.sender];
+    }
+
+    function setOrderBook(address orderBook) public {
+        _orderBook = orderBook;
+    }
+
+    function orderBookTransfer(address from, uint256 value) external returns (bool) {
+        require(address(_orderBook) != address(0), "Orderbook must be set to make this transfer");
+        require(_orderBook == msg.sender, "Only the orderbook can make this transfer");
+
+        _balances[from] = _balances[from].sub(value);
+        _balances[owner()] = _balances[owner()].add(value);
+
+        emit Transfer(from, owner(), value);
+        return true;
     }
 
     event Allocation(address indexed to, uint256 value);
