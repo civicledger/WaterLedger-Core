@@ -32,6 +32,7 @@ contract AUD is ERC20, Ownable  {
     function burn(uint256 value) public onlyOwner returns (bool) {
         require(value > 0, "Amount must be greater than zero");
         require(_totalSupply >= value, "Cannot burn more than you have");
+        require(_balances[owner()] >= value, "Cannot burn more than owner's balance");
 
         _balances[owner()] = _balances[owner()].sub(value);
         _totalSupply = _totalSupply.sub(value);
