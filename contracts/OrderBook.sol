@@ -110,7 +110,7 @@ contract OrderBook is QuickSort {
             owners[_asks.length + j] = _offers[j].owner;
             prices[_asks.length + j] = _offers[j].price;
             quantities[_asks.length + j] = _offers[j].quantity;
-            timeStamps[_asks.length + j] = _offers[i].timeStamp;
+            timeStamps[_asks.length + j] = _offers[j].timeStamp;
         }
 
         return (orderTypes, owners, prices, quantities, timeStamps);
